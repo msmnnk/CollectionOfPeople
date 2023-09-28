@@ -1,15 +1,12 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // Initialize the collection with 4 hard-coded users
-        List<Person> people = new ArrayList<>();
-        people.add(new Person("Alice", 20));
-        people.add(new Person("Bob", 25));
-        people.add(new Person("Carol", 30));
-        people.add(new Person("Dave", 35));
+        Group group = new Group();
+        group.addPerson(new Person("Alice", 20))
+                .addPerson(new Person("Bob", 25))
+                .addPerson(new Person("Carol", 30))
+                .addPerson(new Person("Dave", 35));
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -22,15 +19,15 @@ public class Main {
             int choice = scanner.nextInt();
 
             if (choice == 1) {
-                displayCollectionDetails(people);
+                displayCollectionDetails(group);
             } else if (choice == 2) {
-                displayIndividualUserDetails(people, scanner);
+                displayIndividualUserDetails(group, scanner);
             } else if (choice == 3) {
-                addNewUser(people, scanner);
-                displayCollectionDetails(people);
+                addNewUser(group, scanner);
+                displayCollectionDetails(group);
             } else if (choice == 4) {
-                deleteSelectedUser(people, scanner);
-                displayCollectionDetails(people);
+                deleteSelectedUser(group, scanner);
+                displayCollectionDetails(group);
             } else if (choice == 5) {
                 System.out.println("Exiting...");
                 break;
@@ -41,47 +38,30 @@ public class Main {
         scanner.close();
     }
 
-    private static void displayCollectionDetails(List<Person> people) {
-        // Calculate and display the average age
-        double averageAge = people.stream()
-                .mapToInt(Person::getAge)
-                .average()
-                .orElse(0.0);
-        System.out.println("The average age is: " + averageAge);
-
-        // Find and display the oldest person
-        Person oldestPerson = people.stream()
-                .max((p1, p2) -> Integer.compare(p1.getAge(), p2.getAge()))
-                .orElse(null);
-        if (oldestPerson != null) {
-            System.out.println("The oldest person is: " + oldestPerson.getName() + ", age " + oldestPerson.getAge());
-        }
-
-        // Find and display the youngest person
-        Person youngestPerson = people.stream()
-                .min((p1, p2) -> Integer.compare(p1.getAge(), p2.getAge()))
-                .orElse(null);
-        if (youngestPerson != null) {
-            System.out.println("The youngest person is: " + youngestPerson.getName() + ", age " + youngestPerson.getAge());
-        }
+    private static void displayCollectionDetails(Group group) {
+        System.out.println("Average age: " + group.getAverageAge());
+        System.out.println("Oldest person: " + group.getOldest().getName() + ", age " + group.getOldest().getAge());
+        System.out.println("Youngest person: " + group.getYoungest().getName() + ", age " + group.getYoungest().getAge());
     }
 
-    private static void displayIndividualUserDetails(List<Person> people, Scanner scanner) {
-        System.out.println("Select a user by number:");
-        for (int i = 0; i < people.size(); i++) {
-            System.out.println((i + 1) + ". " + people.get(i).getName());
+    private static void displayIndividualUserDetails(Group group, Scanner scanner) {
+        System.out.println("Select a user by number to see details:");
+        int index = 1;
+        for (Person person : group.getPeople()) {
+            System.out.println(index + ". " + person.getName());
+            index++;
         }
-        int userChoice = scanner.nextInt();
-        if (userChoice >= 1 && userChoice <= people.size()) {
-            Person selectedPerson = people.get(userChoice - 1);
+        int selection = scanner.nextInt();
+        if (selection >= 1 && selection <= group.getPeople().size()) {
+            Person selectedPerson = group.getPeople().get(selection - 1);
             System.out.println("Name: " + selectedPerson.getName());
             System.out.println("Age: " + selectedPerson.getAge());
         } else {
-            System.out.println("Invalid choice.");
+            System.out.println("Invalid selection.");
         }
     }
 
-    private static void addNewUser(List<Person> people, Scanner scanner) {
+    private static void addNewUser(Group group, Scanner scanner) {
         System.out.println("Enter the name of the new user:");
         scanner.nextLine();  // Consume the newline character
         String name = scanner.nextLine();
@@ -98,26 +78,26 @@ public class Main {
                 }
             } else {
                 System.out.println("Invalid input. Please enter a valid age.");
-                scanner.next();  // Consume the invalid token to proceed to the next line
+                scanner.next();  // Consume the invalid token
             }
         }
-
-        people.add(new Person(name, age));
+        group.addPerson(new Person(name, age));
         System.out.println("User added successfully.");
     }
 
-
-    private static void deleteSelectedUser(List<Person> people, Scanner scanner) {
-        System.out.println("Select a user to delete by number:");
-        for (int i = 0; i < people.size(); i++) {
-            System.out.println((i + 1) + ". " + people.get(i).getName());
+    private static void deleteSelectedUser(Group group, Scanner scanner) {
+        System.out.println("Select a user by number to delete:");
+        int index = 1;
+        for (Person person : group.getPeople()) {
+            System.out.println(index + ". " + person.getName());
+            index++;
         }
-        int userChoice = scanner.nextInt();
-        if (userChoice >= 1 && userChoice <= people.size()) {
-            people.remove(userChoice - 1);
+        int selection = scanner.nextInt();
+        if (selection >= 1 && selection <= group.getPeople().size()) {
+            group.getPeople().remove(selection - 1);
             System.out.println("User deleted successfully.");
         } else {
-            System.out.println("Invalid choice.");
+            System.out.println("Invalid selection.");
         }
     }
 }
