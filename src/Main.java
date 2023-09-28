@@ -17,7 +17,8 @@ public class Main {
             System.out.println("1. Show collection details");
             System.out.println("2. Show individual user details");
             System.out.println("3. Add a new user");
-            System.out.println("4. Exit");
+            System.out.println("4. Delete a user");
+            System.out.println("5. Exit");
             int choice = scanner.nextInt();
 
             if (choice == 1) {
@@ -28,6 +29,9 @@ public class Main {
                 addNewUser(people, scanner);
                 displayCollectionDetails(people);
             } else if (choice == 4) {
+                deleteSelectedUser(people, scanner);
+                displayCollectionDetails(people);
+            } else if (choice == 5) {
                 System.out.println("Exiting...");
                 break;
             } else {
@@ -81,9 +85,39 @@ public class Main {
         System.out.println("Enter the name of the new user:");
         scanner.nextLine();  // Consume the newline character
         String name = scanner.nextLine();
-        System.out.println("Enter the age of the new user:");
-        int age = scanner.nextInt();
+
+        int age = -1;
+        while (true) {
+            System.out.println("Enter the age of the new user:");
+            if (scanner.hasNextInt()) {
+                age = scanner.nextInt();
+                if (age >= 0) {
+                    break;
+                } else {
+                    System.out.println("Age cannot be negative. Please enter a valid age.");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a valid age.");
+                scanner.next();  // Consume the invalid token to proceed to the next line
+            }
+        }
+
         people.add(new Person(name, age));
         System.out.println("User added successfully.");
+    }
+
+
+    private static void deleteSelectedUser(List<Person> people, Scanner scanner) {
+        System.out.println("Select a user to delete by number:");
+        for (int i = 0; i < people.size(); i++) {
+            System.out.println((i + 1) + ". " + people.get(i).getName());
+        }
+        int userChoice = scanner.nextInt();
+        if (userChoice >= 1 && userChoice <= people.size()) {
+            people.remove(userChoice - 1);
+            System.out.println("User deleted successfully.");
+        } else {
+            System.out.println("Invalid choice.");
+        }
     }
 }
